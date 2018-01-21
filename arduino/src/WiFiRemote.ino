@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include <ESP8266WiFi.h>
 //#include <WiFiClient.h>
 #include <ESP8266WebServer.h>
@@ -41,11 +43,11 @@ void handleRoot() {
 void handlePower() {
   uint16_t signal[] = {2430, 553, 1236, 555, 655, 539, 1237, 556, 641, 552, 1239, 553, 638, 556, 641, 551, 642, 551, 621, 590, 627, 552, 652, 547, 1242};
   sendRaw(signal, sizeof(signal)/sizeof(signal[0]), 3, 40);
-  
+
   /*
   for(int i = 0; i < 3; i++) {
     // we need 3 repeats
-    irsend.sendRaw(signal, sizeof(signal)/sizeof(signal[0]), 40);  
+    irsend.sendRaw(signal, sizeof(signal)/sizeof(signal[0]), 40);
     delay(50);
   }
   */
@@ -59,7 +61,7 @@ void handleVolumeUp() {
   /*
   for(int i = 0; i < 3; i++) {
     // we need 3 repeats
-    irsend.sendRaw(signal, sizeof(signal)/sizeof(signal[0]), 40);  
+    irsend.sendRaw(signal, sizeof(signal)/sizeof(signal[0]), 40);
     delay(50);
   }
   */
@@ -72,7 +74,7 @@ void handleRaw() {
   String khzString = server.arg("khz");
   int repeats = 0;
   uint16_t khz = 40;
-  
+
   if(repeatsString != "") {
     repeats = repeatsString.toInt();
   }
@@ -80,11 +82,11 @@ void handleRaw() {
   if(khzString != "") {
     khz = khzString.toInt();
   }
-  
+
   int pos = 0;
   int len = 0;
   int to = 0;
-  
+
   // get the length
   while(pos != -1) {
     pos = raw.indexOf(" ", pos) + 1;
@@ -109,7 +111,7 @@ void handleRaw() {
 
   response += ("]<br/>Length: " + String(len) + "<br/>Repeats: " + String(repeats));
   sendRaw(signal, len, repeats, khz);
-  
+
   yield();
 
   server.send(200, "text/html", response);
@@ -122,7 +124,7 @@ void sendRaw(uint16_t data[], int length, int repeats, uint16_t khz) {
   irsend.sendRaw(data, length, khz);
   for(int i = 1; i < repeats; i++) {
     delay(50);
-    irsend.sendRaw(data, length, khz);  
+    irsend.sendRaw(data, length, khz);
   }
 }
 
@@ -239,11 +241,11 @@ void handleIr() {
     }
     else if (protocol == "Sony") {
       server.send(200, "text/html", webOutput);
-      
+
       for(int i = 0; i < 3; i++) {
         // we need 3 repeats
-        irsend.sendSony(code, bits); 
-        delay(50); 
+        irsend.sendSony(code, bits);
+        delay(50);
       }
     }
     else if (protocol == "Whynter") {
@@ -520,7 +522,7 @@ void setup(void) {
   if (mdns.begin("irsvr", WiFi.localIP())) {
     Serial.println("MDNS responder started");
   }
-  
+
   server.on("/ir", handleIr);
   server.on("/reset", handleReset);
   server.on("/learn", learnHandler);

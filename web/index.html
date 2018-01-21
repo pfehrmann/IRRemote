@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!--
+    <link rel="icon" href="../../../../favicon.ico">
+    -->
+
+  <title>Remote</title>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+  <!-- Custom styles for this template -->
+  <link href="jumbotron.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">Remote</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/uploadFile">Upload file</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main role="main">
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <h1 class="display-1">Remote</h1>
+        <p>Eine Fernbedienung für alles :€ on ma wehb</p>
+      </div>
+    </div>
+
+    <div class="container">
+      <h2 class="display-3">Stereo Anlage</h2>
+      <p>Steuerung der Stereo Anlage</p>
+      <div class="row">
+        <div class="col">
+          <p><button class="btn btn-primary" id="stereo-power">Ein/Aus</button></p>
+        </div>
+        <div class="col">
+          <p><button class="btn btn-primary" id="stereo-vol-up">Lauter</button></p>
+        </div>
+        <div class="col">
+          <p><button class="btn btn-primary" id="stereo-vol-down">Leiser</button></p>
+        </div>
+      </div>
+      <h1 class="display-3">Fernseher</h1>
+      <p>Steuerung des Fernsehers</p>
+        <div class="col-sm-5">
+          <div class="row">
+            <div class="col">
+              <button type="button" class="btn btn-primary" id="tv-power">On/Off</button>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-source">Source</button></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-1">1</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-2">2</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-3">3</button></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-4">4</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-5">5</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-6">6</button></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-7">7</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-8">8</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-9">9</button></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-ttx">TTX</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-0">0</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-pre-ch">PRE-CH</button></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-vol-up">VOL+</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-mute">Stumm</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-ch-up">CH+</button></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-vol-down">VOL-</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-ch-list">CH List</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-ch-down">CH-</button></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-menu">Menu</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-smart-hub">Smart Hub</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-guide">Guide</button></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-tools">Tools</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-up">Up</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-info">Info</button></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-left">Left</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-enter">Enter</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-right">Right</button></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-return">Return/Back</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-down">Down</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-exit">Exit</button></p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-rewind">Rew</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-play">Play</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-pause">Pause</button></p>
+            </div>
+            <div class="col">
+              <p><button class="btn btn-primary" id="tv-forward">FWD</button></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+    </div>
+    <!-- /container -->
+
+  </main>
+
+  <footer class="container">
+    <p>&copy; dillipp 2017</p>
+  </footer>
+
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>

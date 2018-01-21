@@ -35,39 +35,6 @@ IRsend irsend(SEND_PIN);
 decode_results  results1;        // Somewhere to store the results
 decode_results  results;        // Somewhere to store the results
 
-
-void handleRoot() {
-  server.send(200, "text/html", "Please specify command! Form: /ir?code=xxx&bits=xx&protocol=x ");
-}
-
-void handlePower() {
-  uint16_t signal[] = {2430, 553, 1236, 555, 655, 539, 1237, 556, 641, 552, 1239, 553, 638, 556, 641, 551, 642, 551, 621, 590, 627, 552, 652, 547, 1242};
-  sendRaw(signal, sizeof(signal)/sizeof(signal[0]), 3, 40);
-
-  /*
-  for(int i = 0; i < 3; i++) {
-    // we need 3 repeats
-    irsend.sendRaw(signal, sizeof(signal)/sizeof(signal[0]), 40);
-    delay(50);
-  }
-  */
-  server.send(200, "text/html", "Sent power");
-}
-
-void handleVolumeUp() {
-  uint16_t signal[] = {2440, 547, 640, 554, 1240, 554, 638, 554, 645, 565, 1229, 547, 642, 556, 639, 550, 644, 572, 627, 548, 644, 551, 645, 550, 1241};
-  sendRaw(signal, sizeof(signal)/sizeof(signal[0]), 3, 40);
-
-  /*
-  for(int i = 0; i < 3; i++) {
-    // we need 3 repeats
-    irsend.sendRaw(signal, sizeof(signal)/sizeof(signal[0]), 40);
-    delay(50);
-  }
-  */
-  server.send(200, "text/html", "Sent vol up");
-}
-
 void handleRaw() {
   String raw = server.arg("raw");
   String repeatsString = server.arg("repeats");
@@ -526,7 +493,6 @@ void setup(void) {
   server.on("/ir", handleIr);
   server.on("/reset", handleReset);
   server.on("/learn", learnHandler);
-  server.on("/test", handleRoot);
 
   server.on("/loadConfig", handleLoadConfig);
   server.on("/loadBackupConfig", handleLoadBackupConfig);
@@ -536,8 +502,6 @@ void setup(void) {
   server.onFileUpload(handleFileUpload   );
   server.on("/uploadFile", HTTP_POST, handleUploadRequest,    handleFileUpload   );
   server.on("/uploadFile", HTTP_GET, handleGetUploadForm);
-  server.on("/power", handlePower);
-  server.on("/volUp", handleVolumeUp);
   server.on("/list", [] {
     String str = "";
     Dir dir = SPIFFS.openDir("/");

@@ -6,11 +6,16 @@
 #include <IRrecv.h>
 #include <WiFiManager.h>          //https://github.com/tzapu/WiFiManager WiFi Configuration Magic
 #include <FS.h>
+#include "fauxmoESP.h"
+
+#define VERBOSE 1
 
 WiFiManager wifiManager;
 
 MDNSResponder mdns;
 ESP8266WebServer server(80);
+
+fauxmoESP fauxmo;
 
 int SERIAL_SPEED = 9600;
 
@@ -27,6 +32,8 @@ IRsend irsend(SEND_PIN);
 
 decode_results  results1;        // Somewhere to store the results
 decode_results  results;        // Somewhere to store the results
+
+bool sendHifiPower = false;
 
 void handleRaw() {
   String raw = server.arg("raw");
@@ -78,9 +85,15 @@ void handleRaw() {
 }
 
 void sendRaw(uint16_t data[], int length, int repeats, uint16_t khz) {
+  #if VERBOSE
+  Serial.print("Sending Raw: ");
   for(int i = 0; i < length; i++) {
-    Serial.println(data[i]);
+    Serial.print(data[i]);
+    Serial.print(" ");
   }
+  Serial.println();
+  #endif
+
   irsend.sendRaw(data, length, khz);
   for(int i = 1; i < repeats; i++) {
     delay(50);
@@ -240,51 +253,55 @@ void handleIr() {
       server.send(404, "text/html", "Protocol not implemented!");
     }
   }  else if (pronto != "") {
-    //pronto code
-    //blocks of 4 digits in hex
-    //preample is 0000 FREQ LEN1 LEN2
-    //followed by ON/OFF durations in FREQ cycles
-    //Freq needs a multiplier
-    //blocks seperated by %20
-    //we are ignoring LEN1 & LEN2 for this use case as not allowing for repeats
-    //just pumping all
-    int spacing = 5;
-    int len = pronto.length();
-    int out_len = ((len - 4) / spacing) - 3;
-    uint16_t prontoCode[out_len];
-    unsigned long timeperiod;
-    unsigned long multiplier = .241246 ;
-
-    int pos = 0;
-    unsigned long hz;
-    if (pronto.substring(pos, 4) != "0000") {
-      server.send(404, "text/html", "unknown pronto format!");
-      //unknown pronto format
-    } else {
-      pos += spacing;
-
-      hz = strtol(pronto.substring(pos, pos + 4).c_str(), NULL, 16);
-      hz = (hz * .241246);
-      hz = 1000000 / hz;
-      //XXX TIMING IS OUT
-      timeperiod = 1000000 / hz;
-      pos += spacing; //hz
-      pos += spacing; //LEN1
-      pos += spacing; //LEN2
-      delay(0);
-      for (int i = 0; i < out_len; i++) {
-        prontoCode[i] = (strtol(pronto.substring(pos, pos + 4).c_str(), NULL, 16) * timeperiod) + 0.5;
-        pos += spacing;
+      int error = sendPronto(pronto);
+      if(error == -1) {
+        server.send(404, "text/html", "unknown pronto format!");
       }
-      //sendRaw
-      yield();
-
-      irsend.sendRaw(prontoCode, out_len, hz / 1000);
       server.send(200, "text/html", "pronto code!");
-    }
 
   } else {
     server.send(404, "text/html", "Missing code or bits!");
+  }
+}
+
+int sendPronto(String &pronto) {
+  //pronto code
+  //blocks of 4 digits in hex
+  //preample is 0000 FREQ LEN1 LEN2
+  //followed by ON/OFF durations in FREQ cycles
+  //Freq needs a multiplier
+  //blocks seperated by %20
+  //we are ignoring LEN1 & LEN2 for this use case as not allowing for repeats
+  //just pumping all
+  Serial.println(pronto);
+  int spacing = 5;
+  int len = pronto.length();
+  int out_len = ((len - 4) / spacing) - 3;
+  uint16_t prontoCode[out_len];
+  unsigned long timeperiod;
+  unsigned long multiplier = .241246 ;
+  int pos = 0;
+  unsigned long hz;
+  if (pronto.substring(pos, 4) != "0000") {
+    return -1;
+    //unknown pronto format
+  } else {
+    pos += spacing;
+    hz = strtol(pronto.substring(pos, pos + 4).c_str(), NULL, 16);
+    hz = (hz * .241246);
+    hz = 1000000 / hz;
+    //XXX TIMING IS OUT
+    timeperiod = 1000000 / hz;
+    pos += spacing; //hz
+    pos += spacing; //LEN1
+    pos += spacing; //LEN2
+    delay(0);
+    for (int i = 0; i < out_len; i++) {
+      prontoCode[i] = (strtol(pronto.substring(pos, pos + 4).c_str(), NULL, 16) * timeperiod) + 0.5;
+      pos += spacing;
+    }
+    //sendRaw
+    irsend.sendRaw(prontoCode, out_len, hz / 1000);
   }
 }
 
@@ -520,10 +537,37 @@ void setup(void) {
   Serial.println("HTTP server started");
   irrecv.enableIRIn();
 
+  // setup fauxmo
+  unsigned char hifi = fauxmo.addDevice("Stereoanlage"); // -> 0
+  unsigned char tv = fauxmo.addDevice("Fernseher");      // -> 1
+  fauxmo.enable(true);
+
+  fauxmo.onSetState([](unsigned char device_id, const char * device_name, bool state) {
+        Serial.printf("[MAIN] Device #%d (%s) state: %s\n", device_id, device_name, state ? "ON" : "OFF");
+        if(device_id == 0) {
+          sendHifiPower = true;
+        } else if(device_id == 1) {
+          String pronto = "0000 006C 0000 0022 00AD 00AD 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0041 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0016 0041 0016 0016 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 0041 0016 06FB";
+          sendPronto(pronto);
+        }
+    });
+    fauxmo.onGetState([](unsigned char device_id, const char * device_name) {
+        return false; // whatever the state of the device is
+    });
+}
+
+void sendHifiPowerCommand() {
+  uint16_t signal[] = {2430, 553, 1236, 555, 655, 539, 1237, 556, 641, 552, 1239, 553, 638, 556, 641, 551, 642, 551, 621, 590, 627, 552, 652, 547, 1242};
+  sendRaw(signal, sizeof(signal)/sizeof(signal[0]), 3, 40);
 }
 
 void loop(void) {
   server.handleClient();
+  fauxmo.handle();
+  if(sendHifiPower) {
+    sendHifiPowerCommand();
+    sendHifiPower = false;
+  }
   if (irrecv.decode(&results1)) {
     Serial.println("Signal recveived");
     if(results1.value==0xffffffff){
